@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/csv"
 	"fmt"
 	"io"
@@ -8,6 +9,7 @@ import (
 	"log"
 	"math"
 	"math/rand"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -24,7 +26,7 @@ type team struct {
 // reads csv of team and generates a random set of scores
 // for each player based on a normal distribution of their average
 func genEducatedScore(team string) (score int, scoreBreakdown string) {
-	dat, err := ioutil.ReadFile(team + ".csv")
+	dat, err := ioutil.ReadFile("./stats/" + team + ".csv")
 	if err != nil {
 		panic(err)
 	}
@@ -97,15 +99,36 @@ func genEducatedScore(team string) (score int, scoreBreakdown string) {
 // }
 
 func main() {
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Println("Simple Shell")
+	fmt.Println("---------------------")
+	fmt.Print("team A ")
+	teamA_name, _ := reader.ReadString('\n')
+	// convert CRLF to LF
+	teamA_name = strings.Replace(teamA_name, "\r\n", "", -1)
+
+	fmt.Print("team B ")
+	teamB_name, _ := reader.ReadString('\n')
+	// convert CRLF to LF
+	teamB_name = strings.Replace(teamB_name, "\r\n", "", -1)
+
+	fmt.Println("Simulating game...")
+	// fmt.Printf("team A %s\n", teamA_name)
+	// fmt.Printf("team B %s\n", teamB_name)
 	//Generate a random seed so that scores are truly random
 	rand.Seed(time.Now().UnixNano())
 
+	if teamA_name == "" {
+		teamA_name = "lakers"
+	}
+	if teamB_name == "" {
+		teamB_name = "clippers"
+	}
+
 	//Create two teams with completely random score totals from 0 to 150
-	var teamA_name = "lakers"
 	teamA_score, teamA_scorebreakdown := genEducatedScore(teamA_name)
 	teamA := team{teamA_name, teamA_score, teamA_scorebreakdown}
 
-	var teamB_name = "clippers"
 	teamB_score, teamB_scorebreakdown := genEducatedScore(teamB_name)
 	teamB := team{teamB_name, teamB_score, teamB_scorebreakdown}
 
